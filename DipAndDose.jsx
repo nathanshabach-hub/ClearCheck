@@ -443,7 +443,7 @@ export default function DipAndDose() {
         .section-accordion-content > div { overflow: hidden; }
         .section-accordion-content.is-open { grid-template-rows: 1fr; opacity: 1; }
         .primary-cta:not(:disabled):hover { background: #146b63 !important; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(11,79,74,0.2); }
-        .brand-row { display: flex; align-items: center; justify-content: space-between; }
+        .brand-row { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
         .theme-toggle { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; border: 1px solid rgba(11,79,74,0.18); border-radius: 50%; background: rgba(255,255,255,0.62); color: #0B4F4A; cursor: pointer; transition: transform 180ms ease, background 180ms ease, color 180ms ease; }
         .theme-toggle:hover { transform: rotate(-10deg) scale(1.05); background: #ffffff; }
         .dark-mode { color: #e6f4f2 !important; background: linear-gradient(145deg, #071f2c 0%, #0b3038 48%, #123e4a 100%) !important; }
