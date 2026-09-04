@@ -400,7 +400,7 @@ export default function DipAndDose() {
           gap: 24px;
           align-items: start;
           max-width: 1080px !important;
-          padding: 58px 28px 72px !important;
+          padding: 73px 28px 72px !important;
         }
         .hero { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 0.72fr; gap: 48px; align-items: end; margin-bottom: 8px !important; }
         .hero h1 { font-size: clamp(32px, 4vw, 50px) !important; letter-spacing: -0.6px; }
@@ -460,7 +460,7 @@ export default function DipAndDose() {
         .dark-mode .primary-cta:disabled { color: #8aa5a2 !important; background: #29454b !important; }
         .dark-mode .results-panel > div { background: #102d36 !important; border-color: rgba(148, 221, 214, 0.16) !important; }
         @media (max-width: 760px) {
-          .app-shell { display: block; padding: 36px 16px 52px !important; }
+          .app-shell { display: block; padding: 51px 16px 52px !important; }
           .hero { display: block; margin-bottom: 26px !important; }
           .hero h1 { font-size: 34px !important; }
           .water-strip { margin-top: 22px; }
