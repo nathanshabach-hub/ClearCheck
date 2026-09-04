@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { Droplet, Waves, AlertTriangle, CheckCircle2, Beaker, Moon, Sun } from "lucide-react";
+import { Droplet, Waves, AlertTriangle, CheckCircle2, Beaker, Moon, Sun, X } from "lucide-react";
 
 /* ---------------------------------------------------------
    Design tokens
@@ -413,6 +413,18 @@ export default function DipAndDose() {
         .readings-panel { grid-column: 2; grid-row: 2 / span 2; margin-bottom: 0 !important; }
         .primary-cta { grid-column: 1; margin-bottom: 0 !important; }
         .results-panel { grid-column: 1 / -1; }
+        .results-overlay { position: fixed; inset: 0; z-index: 10; display: flex; align-items: center; justify-content: center; padding: 24px; background: rgba(7, 31, 44, 0.56); backdrop-filter: blur(6px); animation: overlay-in 220ms ease-out both; }
+        .results-dialog { position: relative; width: min(720px, 100%); max-height: min(780px, calc(100vh - 48px)); overflow-y: auto; padding: 28px; border-radius: 18px; background: #f5f1e8; box-shadow: 0 24px 70px rgba(0,0,0,0.28); animation: dialog-in 320ms cubic-bezier(0.22, 1, 0.36, 1) 40ms both; }
+        @keyframes overlay-in { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes dialog-in { from { opacity: 0; transform: translateY(18px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        .results-close { position: absolute; top: 18px; right: 18px; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border: 1px solid rgba(11,79,74,0.18); border-radius: 50%; background: rgba(255,255,255,0.72); color: #0B4F4A; cursor: pointer; }
+        .results-close:hover { background: #ffffff; transform: scale(1.05); }
+        .results-dialog > div:first-child { padding-right: 44px; }
+        .dark-mode .results-dialog { background: #0b2730; }
+        .dark-mode .results-close { background: #173d46; color: #b9eee8; border-color: rgba(148,221,214,0.3); }
+        @media (prefers-reduced-motion: reduce) {
+          .results-overlay, .results-dialog { animation: none; }
+        }
         .mode-button:hover, .preset-button:hover { filter: brightness(0.98); transform: translateY(-1px); }
         .swatch-button:hover { transform: translateY(-3px) !important; box-shadow: 0 4px 10px rgba(22,48,46,0.14); }
         .primary-cta:not(:disabled):hover { background: #146b63 !important; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(11,79,74,0.2); }
@@ -433,12 +445,14 @@ export default function DipAndDose() {
         .dark-mode .primary-cta:disabled { color: #8aa5a2 !important; background: #29454b !important; }
         .dark-mode .results-panel > div { background: #102d36 !important; border-color: rgba(148, 221, 214, 0.16) !important; }
         @media (max-width: 760px) {
-          .app-shell { display: block; padding: 30px 16px 52px !important; }
+          .app-shell { display: block; padding: 32px 16px 52px !important; }
           .hero { display: block; margin-bottom: 26px !important; }
           .hero h1 { font-size: 34px !important; }
           .water-strip { margin-top: 22px; }
           .setup-panel, .readings-panel { margin-bottom: 18px !important; }
           .primary-cta { margin-bottom: 20px !important; }
+          .results-overlay { align-items: flex-end; padding: 10px; }
+          .results-dialog { max-height: calc(100vh - 20px); padding: 22px 16px; border-radius: 18px 18px 12px 12px; }
         }
       `}</style>
 
@@ -611,14 +625,18 @@ export default function DipAndDose() {
             marginBottom: 20,
           }}
         >
-          {allSelected ? "Get my dose" : "Select all six shades to continue"}
+          {allSelected ? "Get my Readings" : "Select all six shades to continue"}
         </button>
 
         {/* Results */}
         {showResults && allSelected && (
-          <div className="results-panel">
-            <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: 16, marginBottom: 12, color: COLORS.tealDeep }}>
-              Your dose
+          <div className="results-overlay" onClick={() => setShowResults(false)}>
+            <div className="results-dialog" role="dialog" aria-modal="true" aria-labelledby="dose-title" onClick={(event) => event.stopPropagation()}>
+              <button className="results-close" type="button" onClick={() => setShowResults(false)} aria-label="Close dose results" title="Close dose results">
+                <X size={18} />
+              </button>
+            <div id="dose-title" style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: 16, marginBottom: 12, color: COLORS.tealDeep }}>
+              Your readings and what to change/add
             </div>
 
             {actionable.length === 0 && (
@@ -680,6 +698,7 @@ export default function DipAndDose() {
                 product's label. Add chemicals one at a time, never mix them together, add acid to water (not the
                 reverse), and keep the pump running while dosing. Wait 4–6 hours and retest before dosing again.
               </div>
+            </div>
             </div>
           </div>
         )}
