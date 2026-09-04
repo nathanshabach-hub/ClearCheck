@@ -322,6 +322,7 @@ export default function DipAndDose() {
   const [readings, setReadings] = useState({ fc: null, tc: null, ph: null, ta: null, cya: null, ch: null });
   const [showResults, setShowResults] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+  const [readingsOpen, setReadingsOpen] = useState(true);
 
   const allSelected = PARAMS.every((p) => readings[p.key] !== null);
   const volumeL = volume * UNIT_TO_L[unit];
@@ -399,7 +400,7 @@ export default function DipAndDose() {
           gap: 24px;
           align-items: start;
           max-width: 1080px !important;
-          padding: 52px 28px 72px !important;
+          padding: 58px 28px 72px !important;
         }
         .hero { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 0.72fr; gap: 48px; align-items: end; margin-bottom: 8px !important; }
         .hero h1 { font-size: clamp(32px, 4vw, 50px) !important; letter-spacing: -0.6px; }
@@ -422,11 +423,25 @@ export default function DipAndDose() {
         .results-dialog > div:first-child { padding-right: 44px; }
         .dark-mode .results-dialog { background: #0b2730; }
         .dark-mode .results-close { background: #173d46; color: #b9eee8; border-color: rgba(148,221,214,0.3); }
+        .dark-mode .param-accordion { border-color: rgba(148,221,214,0.16); }
+        .dark-mode .accordion-chevron { border-color: rgba(148,221,214,0.3); }
         @media (prefers-reduced-motion: reduce) {
           .results-overlay, .results-dialog { animation: none; }
         }
         .mode-button:hover, .preset-button:hover { filter: brightness(0.98); transform: translateY(-1px); }
         .swatch-button:hover { transform: translateY(-3px) !important; box-shadow: 0 4px 10px rgba(22,48,46,0.14); }
+        .param-accordion { border-bottom: 1px solid rgba(22,48,46,0.12); }
+        .param-accordion:last-child { border-bottom: none; }
+        .param-accordion-trigger:hover { color: #0B4F4A; }
+        .param-accordion-content { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows 220ms ease, opacity 180ms ease; }
+        .param-accordion-content > div { overflow: hidden; }
+        .param-accordion-content.is-open { grid-template-rows: 1fr; opacity: 1; }
+        .accordion-chevron { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border: 1px solid rgba(22,48,46,0.18); border-radius: 50%; font-family: "Space Grotesk", sans-serif; font-size: 16px; line-height: 1; }
+        .section-accordion-trigger { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 0 0 12px; border: none; background: none; color: #0B4F4A; cursor: pointer; text-align: left; }
+        .section-accordion-trigger:hover { color: #146B63; }
+        .section-accordion-content { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows 240ms ease, opacity 180ms ease; }
+        .section-accordion-content > div { overflow: hidden; }
+        .section-accordion-content.is-open { grid-template-rows: 1fr; opacity: 1; }
         .primary-cta:not(:disabled):hover { background: #146b63 !important; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(11,79,74,0.2); }
         .brand-row { display: flex; align-items: center; justify-content: space-between; }
         .theme-toggle { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; border: 1px solid rgba(11,79,74,0.18); border-radius: 50%; background: rgba(255,255,255,0.62); color: #0B4F4A; cursor: pointer; transition: transform 180ms ease, background 180ms ease, color 180ms ease; }
@@ -445,7 +460,7 @@ export default function DipAndDose() {
         .dark-mode .primary-cta:disabled { color: #8aa5a2 !important; background: #29454b !important; }
         .dark-mode .results-panel > div { background: #102d36 !important; border-color: rgba(148, 221, 214, 0.16) !important; }
         @media (max-width: 760px) {
-          .app-shell { display: block; padding: 32px 16px 52px !important; }
+          .app-shell { display: block; padding: 36px 16px 52px !important; }
           .hero { display: block; margin-bottom: 26px !important; }
           .hero h1 { font-size: 34px !important; }
           .water-strip { margin-top: 22px; }
@@ -595,15 +610,20 @@ export default function DipAndDose() {
 
         {/* Step 2 — strip readings */}
         <div className="panel readings-panel" style={{ background: COLORS.white, borderRadius: 14, padding: 20, marginBottom: 20, border: `1px solid ${COLORS.sand2}` }}>
-          <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: 14, marginBottom: 4, color: COLORS.tealDeep }}>
-            2. Tap the closest shade for each pad
+          <button className="section-accordion-trigger" type="button" onClick={() => setReadingsOpen((open) => !open)} aria-expanded={readingsOpen} aria-controls="readings-content">
+            <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: 14 }}>2. Tap the closest shade for each pad</span>
+            <span className="accordion-chevron" aria-hidden="true">{readingsOpen ? "−" : "+"}</span>
+          </button>
+          <div id="readings-content" className={`section-accordion-content${readingsOpen ? " is-open" : ""}`}>
+            <div>
+              <div style={{ fontSize: 12.5, color: COLORS.navySoft, marginBottom: 16, lineHeight: 1.5 }}>
+                Tip: fix in this order for best results — alkalinity first, then pH, then sanitiser, then stabiliser/hardness.
+              </div>
+              {PARAMS.map((p) => (
+                <ParamRow key={p.key} param={p} selected={readings[p.key]} onSelect={handleSelect} />
+              ))}
+            </div>
           </div>
-          <div style={{ fontSize: 12.5, color: COLORS.navySoft, marginBottom: 16, lineHeight: 1.5 }}>
-            Tip: fix in this order for best results — alkalinity first, then pH, then sanitiser, then stabiliser/hardness.
-          </div>
-          {PARAMS.map((p) => (
-            <ParamRow key={p.key} param={p} selected={readings[p.key]} onSelect={handleSelect} />
-          ))}
         </div>
 
         {/* CTA */}
